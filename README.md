@@ -18,3 +18,9 @@
 - [x] dfS_ID, dfS_TH, dfS_PH, dfS_SG, dfS_IN: dataframes derived from dfS after filtering out end date
 - [x] dfT_ID, dfT_TH, dfT_PH, dfT_SG, dfT_IN: dataframes derived from dfT after filtering out end date
 - [x] From here, all other variables are coded based on various conditions. May need to edit for efficiency?
+
+3rd March 2019: 
+- [ ] Create a Web Server in Requests and Flask 
+- [ ] Refactor Panda in TDD 
+- [ ] Run Seaborn with Panda 
+
