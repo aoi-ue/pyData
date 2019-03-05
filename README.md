@@ -24,3 +24,5 @@
 - [ ] Refactor Panda in TDD 
 - [ ] Run Seaborn with Panda 
 
+5th Mar 2019:
+- [x] Refactored Code: created country files + used np.where
