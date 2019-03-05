@@ -2,7 +2,6 @@ import requests
 
 # pyServer 
 # Create a web server using BASEHttpServer, and convert to Requests lib
-# Running All Locally -- 
 # Create S3 Bucket with mock excel file 
 # Replace with Excel Data, Call S3 Data with using AWS CLI 
 
