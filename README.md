@@ -26,3 +26,7 @@
 
 5th Mar 2019:
 - [x] Refactored Code: created country files + used np.where
+
+22nd MAr 2019:
+- [x] Reorganized Pandas Code
+- [x] Deleted the country specific files

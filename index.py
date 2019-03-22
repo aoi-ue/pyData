@@ -8,21 +8,22 @@ from dateutil.relativedelta import relativedelta
 def strip_spaces(a_str_with_spaces):
     return a_str_with_spaces.replace(' ', '')
 
-#we will replace this with version control excel
-
 excelname = 'XXX'
 
-df = pd.read_excel(excelname, sheet_name = 'Sheet1',
-                  converters={'subtitle_english': strip_spaces, 'subtitle_bahasa': strip_spaces, 'subtitle_thai': strip_spaces,
-                             'subtitle_hindi': strip_spaces, 'subtitle_tamil': strip_spaces, 'subtitle_telegu': strip_spaces,
-                             'audiolanguage_english': strip_spaces, 'audiolanguage_hindi': strip_spaces,
-                             'audiolanguage_tamil': strip_spaces, 'audiolanguage_telegu': strip_spaces,
-                             'audiolanguage_thai': strip_spaces, 'audiolanguage_mandarin': strip_spaces,
-                             'audiolanguage_bahasa': strip_spaces})
+df = pd.read_csv('x',
+                   converters = {'subtitle_english': strip_spaces, 'subtitle_bahasa': strip_spaces, 'subtitle_thai': strip_spaces, 
+                                 'subtitle_hindi': strip_spaces, 'subtitle_tamil': strip_spaces, 'subtitle_telegu': strip_spaces, 
+                                 'audiolanguage_english': strip_spaces, 'audiolanguage_hindi': strip_spaces, 
+                                 'audiolanguage_tamil': strip_spaces, 'audiolanguage_telegu': strip_spaces, 
+                                 'audiolanguage_thai': strip_spaces, 'audiolanguage_mandarin': strip_spaces, 
+                                 'audiolanguage_bahasa': strip_spaces})
 
 #setting a variable for 3 months
 three_months = date.today() + relativedelta(months=+3)
 mth3 = pd.to_datetime(three_months)
+
+#Variable to get today's date automatically
+todaydate = pd.datetime.now()
 
 #Deleting unused columns
 
@@ -40,32 +41,46 @@ df.drop(['locale','directors','lic_start_date_malaysia','lic_end_date_malaysia',
          'rental_duration', 'currency_india', 'currency_philiphines', 'currency_thailand', 'currency_singapore', 
          'currency_malaysia', 'currency_indonesia'], axis=1, inplace=True)
 
-#Converting the dates
+#Creating new columns to capture the converted dates from excel's default
 
-#Indonesia
 df['ID_Start_Date'] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df.lic_start_date_indonesia, 'D')
 df['ID_End_Date'] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df.lic_end_date_indonesia, 'D')
-
-#Thailand
 df['TH_Start_Date'] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df.lic_start_date_thailand, 'D')
 df['TH_End_Date'] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df.lic_end_date_thailand, 'D')
-
-#Philippines
 df['PH_Start_Date'] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df.lic_start_date_philiphines, 'D')
 df['PH_End_Date'] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df.lic_end_date_philiphines, 'D')
-
-#Singapore
 df['SG_Start_Date'] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df.lic_start_date_singapore, 'D')
 df['SG_End_Date'] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df.lic_end_date_singapore, 'D')
-
-#India
 df['IN_Start_Date'] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df.lic_start_date_india, 'D')
 df['IN_End_Date'] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df.lic_end_date_india, 'D')
 
-#Splitting the dataset into S & T
+#Categorize Start_Dates into Current (currently running) or Future (to run in the future)
+df['ID_TimePeriod'] = np.where(df['ID_Start_Date']<=todaydate, 'Current', 'Future')
+df['TH_TimePeriod'] = np.where(df['TH_Start_Date']<=todaydate, 'Current', 'Future')
+df['PH_TimePeriod'] = np.where(df['PH_Start_Date']<=todaydate, 'Current', 'Future')
+df['SG_TimePeriod'] = np.where(df['SG_Start_Date']<=todaydate, 'Current', 'Future')
+df['IN_TimePeriod'] = np.where(df['IN_Start_Date']<=todaydate, 'Current', 'Future')
 
-dfS = df[df['vod_type'] == 'SVOD']
-dfT = df[df['vod_type'] == 'TVOD']
 
-#Variable to get today's date automatically
-todaydate = pd.datetime.now()
+#Categorize End_Dates into Expiring (within the next 3 months) or Not Expiring in the near future
+df['ID_Expiring'] = np.where((df['ID_End_Date'] >= todaydate) & (df['ID_End_Date'] <= mth3), 'Expiring', 'Not Expiring')
+df['TH_Expiring'] = np.where((df['TH_End_Date'] >= todaydate) & (df['TH_End_Date'] <= mth3), 'Expiring', 'Not Expiring')
+df['PH_Expiring'] = np.where((df['PH_End_Date'] >= todaydate) & (df['PH_End_Date'] <= mth3), 'Expiring', 'Not Expiring')
+df['SG_Expiring'] = np.where((df['SG_End_Date'] >= todaydate) & (df['SG_End_Date'] <= mth3), 'Expiring', 'Not Expiring')
+df['IN_Expiring'] = np.where((df['IN_End_Date'] >= todaydate) & (df['IN_End_Date'] <= mth3), 'Expiring', 'Not Expiring')
+
+#Categorize subtitles to Live or Not Live
+df['ENG_SUB'] = np.where(df['subtitle_english'] == 'Y', 'Live', 'Not Live')
+df['BH_SUB'] = np.where(df['subtitle_bahasa'] == 'Y', 'Live', 'Not Live')
+df['TH_SUB'] = np.where(df['subtitle_thai'] == 'Y', 'Live', 'Not Live')
+df['HIN_SUB'] = np.where(df['subtitle_hindi'] == 'Y', 'Live', 'Not Live')
+df['TAM_SUB'] = np.where(df['subtitle_tamil'] == 'Y', 'Live', 'Not Live')
+df['TEL_SUB'] = np.where(df['subtitle_telegu'] == 'Y', 'Live', 'Not Live')
+
+#Categorize dubs to Live or Not Live
+df['BH_DUB'] = np.where(df['audiolanguage_bahasa'] == 'Y', 'Live', 'Not Live')
+df['TH_DUB'] = np.where(df['audiolanguage_thai'] == 'Y', 'Live', 'Not Live')
+df['MAN_DUB'] = np.where(df['audiolanguage_mandarin'] == 'Y', 'Live', 'Not Live')
+df['HIN_DUB'] = np.where(df['audiolanguage_hindi'] == 'Y', 'Live', 'Not Live')
+df['TAM_DUB'] = np.where(df['audiolanguage_tamil'] == 'Y', 'Live', 'Not Live')
+df['TEL_DUB'] = np.where(df['audiolanguage_telegu'] == 'Y', 'Live', 'Not Live')
