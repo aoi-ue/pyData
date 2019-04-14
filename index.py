@@ -4,13 +4,14 @@ import numpy as np
 import xlrd
 from datetime import date
 from dateutil.relativedelta import relativedelta
+import matplotlib.pyplot as plt
 
 def strip_spaces(a_str_with_spaces):
     return a_str_with_spaces.replace(' ', '')
 
-excelname = 'XXX'
+excelname = 'x'
 
-df = pd.read_csv('x',
+df = pd.read_csv(excelname,
                    converters = {'subtitle_english': strip_spaces, 'subtitle_bahasa': strip_spaces, 'subtitle_thai': strip_spaces, 
                                  'subtitle_hindi': strip_spaces, 'subtitle_tamil': strip_spaces, 'subtitle_telegu': strip_spaces, 
                                  'audiolanguage_english': strip_spaces, 'audiolanguage_hindi': strip_spaces, 
@@ -84,3 +85,46 @@ df['MAN_DUB'] = np.where(df['audiolanguage_mandarin'] == 'Y', 'Live', 'Not Live'
 df['HIN_DUB'] = np.where(df['audiolanguage_hindi'] == 'Y', 'Live', 'Not Live')
 df['TAM_DUB'] = np.where(df['audiolanguage_tamil'] == 'Y', 'Live', 'Not Live')
 df['TEL_DUB'] = np.where(df['audiolanguage_telegu'] == 'Y', 'Live', 'Not Live')
+
+#TOTALS, excludes expired content
+ID_SVOD_TOTALDURATION = df[(df['vod_type'] == 'SVOD') & (df['ID_End_Date'] >= todaydate)]['duration'].sum()
+TH_SVOD_TOTALDURATION = df[(df['vod_type'] == 'SVOD') & (df['TH_End_Date'] >= todaydate)]['duration'].sum()
+PH_SVOD_TOTALDURATION = df[(df['vod_type'] == 'SVOD') & (df['PH_End_Date'] >= todaydate)]['duration'].sum()
+SG_SVOD_TOTALDURATION = df[(df['vod_type'] == 'SVOD') & (df['SG_End_Date'] >= todaydate)]['duration'].sum()
+IN_SVOD_TOTALDURATION = df[(df['vod_type'] == 'SVOD') & (df['IN_End_Date'] >= todaydate)]['duration'].sum()
+
+COUNTRY_SVOD = [ID_SVOD_TOTALDURATION, TH_SVOD_TOTALDURATION, PH_SVOD_TOTALDURATION, SG_SVOD_TOTALDURATION, IN_SVOD_TOTALDURATION]
+
+ID_TVOD_TOTALDURATION = df[(df['vod_type'] == 'TVOD') & (df['ID_End_Date'] >= todaydate)]['duration'].sum()
+TH_TVOD_TOTALDURATION = df[(df['vod_type'] == 'TVOD') & (df['TH_End_Date'] >= todaydate)]['duration'].sum()
+PH_TVOD_TOTALDURATION = df[(df['vod_type'] == 'TVOD') & (df['PH_End_Date'] >= todaydate)]['duration'].sum()
+SG_TVOD_TOTALDURATION = df[(df['vod_type'] == 'TVOD') & (df['SG_End_Date'] >= todaydate)]['duration'].sum()
+IN_TVOD_TOTALDURATION = df[(df['vod_type'] == 'TVOD') & (df['IN_End_Date'] >= todaydate)]['duration'].sum()
+
+COUNTRY_TVOD = [ID_TVOD_TOTALDURATION, TH_TVOD_TOTALDURATION, PH_TVOD_TOTALDURATION, SG_TVOD_TOTALDURATION, IN_TVOD_TOTALDURATION]
+
+# Data to plot: 5 Countries SVOD
+labels = 'ID SVOD', 'TH SVOD', 'PH_SVOD', 'SG_SVOD', 'IN_SVOD'
+sizes = COUNTRY_SVOD
+colors = ['blue', 'red', 'yellow', 'green', 'purple']
+explode = (0, 0.1, 0, 0, 0)  # explode 1st slice
+ 
+# Plot
+plt.pie(sizes, explode=explode, labels=labels, colors=colors,
+autopct='%1.2f%%', shadow=True, startangle=140)
+ 
+plt.axis('equal')
+plt.show()
+
+# Data to plot: 5 Countries TVOD
+labels = 'ID TVOD', 'TH TVOD', 'PH_TVOD', 'SG_TVOD', 'IN_TVOD'
+sizes = COUNTRY_TVOD
+colors = ['blue', 'red', 'yellow', 'green', 'purple']
+explode = (0, 0, 0, 0.1, 0)  # explode 1st slice
+ 
+# Plot
+plt.pie(sizes, explode=explode, labels=labels, colors=colors,
+autopct='%1.2f%%', shadow=True, startangle=140)
+ 
+plt.axis('equal')
+plt.show()
