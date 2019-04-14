@@ -1,3 +1,8 @@
 DataDump
+<<<<<<< HEAD
 requirement.txt
 .vscode/
+=======
+requirements.txt
+.vscode/
+>>>>>>> change of files titles
