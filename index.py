@@ -1,15 +1,24 @@
 import datetime as dt 
 import pandas as pd
 import numpy as np
+import seaborn as sns
 import xlrd
+
+import plotly
+plotly.tools.set_credentials_file(username='SandeepSingh', api_key='UnB6UI5RTJVMzzK4eQUx')
+import plotly.plotly as py
+import plotly.graph_objs as go
+from IPython.display import IFrame
+
 from datetime import date
 from dateutil.relativedelta import relativedelta
+
 import matplotlib.pyplot as plt
 
 def strip_spaces(a_str_with_spaces):
     return a_str_with_spaces.replace(' ', '')
 
-excelname = 'x'
+excelname = 'E:\\PythonProjects\\pyData\\DataDump\\CSV_SINGTEL_INGESTION_EXTRACT_2018-12-26.csv'
 
 df = pd.read_csv(excelname,
                    converters = {'subtitle_english': strip_spaces, 'subtitle_bahasa': strip_spaces, 'subtitle_thai': strip_spaces, 
@@ -102,29 +111,3 @@ SG_TVOD_TOTALDURATION = df[(df['vod_type'] == 'TVOD') & (df['SG_End_Date'] >= to
 IN_TVOD_TOTALDURATION = df[(df['vod_type'] == 'TVOD') & (df['IN_End_Date'] >= todaydate)]['duration'].sum()
 
 COUNTRY_TVOD = [ID_TVOD_TOTALDURATION, TH_TVOD_TOTALDURATION, PH_TVOD_TOTALDURATION, SG_TVOD_TOTALDURATION, IN_TVOD_TOTALDURATION]
-
-# Data to plot: 5 Countries SVOD
-labels = 'ID SVOD', 'TH SVOD', 'PH_SVOD', 'SG_SVOD', 'IN_SVOD'
-sizes = COUNTRY_SVOD
-colors = ['blue', 'red', 'yellow', 'green', 'purple']
-explode = (0, 0.1, 0, 0, 0)  # explode 1st slice
- 
-# Plot
-plt.pie(sizes, explode=explode, labels=labels, colors=colors,
-autopct='%1.2f%%', shadow=True, startangle=140)
- 
-plt.axis('equal')
-plt.show()
-
-# Data to plot: 5 Countries TVOD
-labels = 'ID TVOD', 'TH TVOD', 'PH_TVOD', 'SG_TVOD', 'IN_TVOD'
-sizes = COUNTRY_TVOD
-colors = ['blue', 'red', 'yellow', 'green', 'purple']
-explode = (0, 0, 0, 0.1, 0)  # explode 1st slice
- 
-# Plot
-plt.pie(sizes, explode=explode, labels=labels, colors=colors,
-autopct='%1.2f%%', shadow=True, startangle=140)
- 
-plt.axis('equal')
-plt.show()
