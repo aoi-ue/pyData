@@ -18,7 +18,7 @@ import matplotlib.pyplot as plt
 def strip_spaces(a_str_with_spaces):
     return a_str_with_spaces.replace(' ', '')
 
-excelname = 'E:\\PythonProjects\\pyData\\DataDump\\CSV_SINGTEL_INGESTION_EXTRACT_2018-12-26.csv'
+excelname = 'x'
 
 df = pd.read_csv(excelname,
                    converters = {'subtitle_english': strip_spaces, 'subtitle_bahasa': strip_spaces, 'subtitle_thai': strip_spaces, 
