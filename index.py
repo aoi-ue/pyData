@@ -14,5 +14,3 @@ plotly.tools.set_credentials_file(username='SandeepSingh', api_key='UnB6UI5RTJVM
 import plotly.plotly as py
 import plotly.graph_objs as go
 from IPython.display import IFrame
-
-print("Hey")
