@@ -28,6 +28,24 @@ df = pd.read_csv(excelname,
                                  'audiolanguage_thai': strip_spaces, 'audiolanguage_mandarin': strip_spaces, 
                                  'audiolanguage_bahasa': strip_spaces})
 
+
+#Testing out
+################################################
+def subtitle():
+    
+    emptydict = []
+    
+    language = ['english', 'bahasa', 'thai', 'hindi', 'tamil', 'telegu']
+    t = Template('\'subtitle_$language\': strip_spaces')
+    
+    for i in language: 
+        lan = {t.substitute(language = i)}
+        emptydict.append(lan)
+        
+    return emptydict
+################################################
+
+
 #setting a variable for 3 months
 three_months = date.today() + relativedelta(months=+3)
 mth3 = pd.to_datetime(three_months)
