@@ -19,15 +19,16 @@ import matplotlib.pyplot as plt
 def strip_spaces(a_str_with_spaces):
     return a_str_with_spaces.replace(' ', '')
 
-excelname = 'x'
+excelname = 'E:\\PythonProjects\\pyData\DataDump\\CSV_SINGTEL_INGESTION_EXTRACT_2018-12-26.csv'
 
-df = pd.read_csv(excelname,
-                   converters = {'subtitle_english': strip_spaces, 'subtitle_bahasa': strip_spaces, 'subtitle_thai': strip_spaces, 
-                                 'subtitle_hindi': strip_spaces, 'subtitle_tamil': strip_spaces, 'subtitle_telegu': strip_spaces, 
-                                 'audiolanguage_english': strip_spaces, 'audiolanguage_hindi': strip_spaces, 
-                                 'audiolanguage_tamil': strip_spaces, 'audiolanguage_telegu': strip_spaces, 
-                                 'audiolanguage_thai': strip_spaces, 'audiolanguage_mandarin': strip_spaces, 
-                                 'audiolanguage_bahasa': strip_spaces})
+df = pd.read_csv(excelname)
+
+# converters = {'subtitle_english': strip_spaces, 'subtitle_bahasa': strip_spaces, 'subtitle_thai': strip_spaces, 
+#                                  'subtitle_hindi': strip_spaces, 'subtitle_tamil': strip_spaces, 'subtitle_telegu': strip_spaces, 
+#                                  'audiolanguage_english': strip_spaces, 'audiolanguage_hindi': strip_spaces, 
+#                                  'audiolanguage_tamil': strip_spaces, 'audiolanguage_telegu': strip_spaces, 
+#                                  'audiolanguage_thai': strip_spaces, 'audiolanguage_mandarin': strip_spaces, 
+#                                  'audiolanguage_bahasa': strip_spaces}
                                  
 
 #setting a variable for 3 months
