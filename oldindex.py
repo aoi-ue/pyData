@@ -3,6 +3,7 @@ import pandas as pd
 import numpy as np
 import seaborn as sns
 import xlrd
+from string import Template
 
 import plotly
 plotly.tools.set_credentials_file(username='SandeepSingh', api_key='UnB6UI5RTJVMzzK4eQUx')
@@ -27,24 +28,7 @@ df = pd.read_csv(excelname,
                                  'audiolanguage_tamil': strip_spaces, 'audiolanguage_telegu': strip_spaces, 
                                  'audiolanguage_thai': strip_spaces, 'audiolanguage_mandarin': strip_spaces, 
                                  'audiolanguage_bahasa': strip_spaces})
-
-
-#Testing out
-################################################
-def subtitle():
-    
-    emptydict = []
-    
-    language = ['english', 'bahasa', 'thai', 'hindi', 'tamil', 'telegu']
-    t = Template('\'subtitle_$language\': strip_spaces')
-    
-    for i in language: 
-        lan = {t.substitute(language = i)}
-        emptydict.append(lan)
-        
-    return emptydict
-################################################
-
+                                 
 
 #setting a variable for 3 months
 three_months = date.today() + relativedelta(months=+3)

@@ -1,6 +1,7 @@
 import pytest
-from index import addition
+from refactorNtest import additional 
 
 def test1():
-    assert addition(1,2) == 3
-    assert addition(3,4) == 6
+    assert additional(1,2) == 3
+    assert additional(3,4) == 7
+
