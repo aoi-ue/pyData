@@ -10,8 +10,9 @@ def subtitle():
     for i in language: 
         lan = t.substitute(language = i)
         emptydict.append(lan)
-        
-    return emptydict
+    
+    print (emptydict)
 
-for i in subtitle():
-    print(df[i].str.strip())
+
+subtitle() 
+ 
