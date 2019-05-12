@@ -1,5 +1,5 @@
 from string import Template
-from oldindex import df
+from index import df
 
 def subtitle():
     
@@ -13,6 +13,10 @@ def subtitle():
     
     print (emptydict)
 
-
 subtitle() 
  
+for i in subtitle():
+    print(df[i].str.strip())
+
+subtitle_length = len(subtitle())
+subtitle_unique_length = len(set(subtitle()))
