@@ -4,19 +4,14 @@ from index import df
 def subtitle():
     
     emptydict = []
-    language = ['english', 'bahasa', 'thai', 'hindi', 'tamil', 'telegu']
+    language = ['english', 'bahasa', 'thai', 'hindi', 'tamil', 'telegu', 'japanese']
     t = Template('subtitle_$language')
     
     for i in language: 
         lan = t.substitute(language = i)
         emptydict.append(lan)
-    
-    print (emptydict)
-
-subtitle() 
- 
-for i in subtitle():
-    print(df[i].str.strip())
+        
+    return emptydict
 
 subtitle_length = len(subtitle())
 subtitle_unique_length = len(set(subtitle()))
