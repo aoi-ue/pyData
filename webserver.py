@@ -2,8 +2,8 @@
 import requests 
 import json
 
-# Create/intialize a web server using BASEHttpServer, and convert to Requests/Bottle/Flask lib
-# Create a on-listen HTTP port for S3 to extract data 
+# intialize a web server using BASEHttpServer, and convert to Requests lib
+# Create on-listening GET Request HTTP port for S3 to extract data 
 # Get S3 bucket's excel sheet, using AWS CLI 
 r = requests.get('https://api.github.com/user', auth=('user', 'pass'))
 data = json.loads(r.content)

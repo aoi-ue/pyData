@@ -11,9 +11,4 @@ def test2():
     else:
         print(dupes)
         assert False
-        
 
-test2()
-
-for i in subtitle():
-    print(df[i].str.strip())
