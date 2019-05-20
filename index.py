@@ -19,7 +19,7 @@ from string import Template
 
 #pulling the excel file into a variable, excelname
 
-excelname = 'E:\\PythonProjects\\pyData\DataDump\\CSV_SINGTEL_INGESTION_EXTRACT_2018-12-26.csv'
+excelname = 'x'
 
 #creating the dataframe, df
 
@@ -34,44 +34,7 @@ mth3 = pd.to_datetime(three_months)
 
 todaydate = pd.datetime.now()
 
-#creating pre-set lists
-
-country = ['indonesia', 'thailand', 'philiphines', 'singapore', 'india']
-countrycode = ['ID', 'TH', 'PH', 'SG', 'IN']
-sublanguage = ['english', 'bahasa', 'thai', 'hindi', 'tamil', 'telegu']
-audiolanguage = ['english', 'bahasa', 'thai', 'mandarin', 'hindi', 'tamil', 'telegu']
-
-#empty lists
-
-subtitlelist = []
-audiolist = []
-
-
-
-for a, b in zip(sublanguage, audiolanguage):
-    text = "subtitle_"
-    text2 = "audiolanguage_"
-    subtitlelist.append(text + a)
-    audiolist.append(text2 + b)
-
-subtitleaudiolist = subtitlelist + audiolist
-
-for i in subtitleaudiolist:
-    df[i] = df[i].str.strip()
-
-licensedates = ['lic_start_date_indonesia', 'lic_end_date_indonesia', 'lic_start_date_thailand', 'lic_end_date_thailand',
-               'lic_start_date_philiphines', 'lic_end_date_philiphines', 'lic_start_date_singapore', 'lic_end_date_singapore',
-               'lic_start_date_india', 'lic_end_date_india']
-
-newlicensedates = ['ID_Start_Date', 'ID_End_Date', 'TH_Start_Date', 'TH_End_Date', 
-                   'PH_Start_Date', 'PH_End_Date', 'SG_Start_Date', 'SG_End_Date', 
-                   'IN_Start_Date', 'IN_End_Date']
-
-for i in country:
-    country2 = i * 2 
-
-
-#dropping unused columns
+#drop columns
 
 df.drop(['directors','lic_start_date_malaysia','lic_end_date_malaysia','lic_start_date_mauritius',
          'lic_end_date_mauritius','contenttype','status','playback_india','playback_philiphines','playback_thailand',
@@ -87,19 +50,95 @@ df.drop(['directors','lic_start_date_malaysia','lic_end_date_malaysia','lic_star
          'rental_duration', 'currency_india', 'currency_philiphines', 'currency_thailand', 'currency_singapore', 
          'currency_malaysia', 'currency_indonesia'], axis=1, inplace=True)
 
-#Creating new columns to capture the converted dates from excel's default
+#Setting main lists and string format
 
-licensedates = ['lic_start_date_indonesia', 'lic_end_date_indonesia', 'lic_start_date_thailand', 'lic_end_date_thailand',
-               'lic_start_date_philiphines', 'lic_end_date_philiphines', 'lic_start_date_singapore', 'lic_end_date_singapore',
-               'lic_start_date_india', 'lic_end_date_india']
+country = ['indonesia', 'thailand', 'philiphines', 'singapore', 'india']
+countrycode = ['ID', 'TH', 'PH', 'SG', 'IN']
+sublanguage = ['english', 'bahasa', 'thai', 'hindi', 'tamil', 'telegu']
+audiolanguage = ['english', 'bahasa', 'thai', 'mandarin', 'hindi', 'tamil', 'telegu']
+subcode = ['ENG', 'BH', 'TH', 'HIN', 'TAM', 'TEL']
+audiocode = ['ENG', 'BH', 'TH', 'MAN', 'HIN', 'TAM' ,'TEL']
 
-newlicensedates = ['ID_Start_Date', 'ID_End_Date', 'TH_Start_Date', 'TH_End_Date', 
-                   'PH_Start_Date', 'PH_End_Date', 'SG_Start_Date', 'SG_End_Date', 
-                   'IN_Start_Date', 'IN_End_Date']
+subtext = "subtitle_"
+dubtext = "audiolanguage_"
+oldstartlic = "lic_start_date_"
+oldendlic = "lic_end_date_"
+newstartlic = "_Start_Date"
+newendlic = "_End_Date"
+tp = "_TimePeriod"
+ccexp = "_Expiring"
+ccsub = "_SUB"
+ccdub = "_DUB"
 
-for ld, nld in zip(licensedates, newlicensedates):
-    df[nld] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df[ld], 'D')
+subtitlelist = []
+audiolist = []
+oldstartliclist = []
+oldendliclist = []
+newstartliclist = []
+newendliclist = []
+newtp = []
+newccexp = []
+newccsub = []
+newccdub = []
 
-newlicensedates_start = [s for s in newlicensedates if "Start" in s]
-newlicensedates_end = [s for s in newlicensedates if "End" in s]
+#########################################################################################################
+
+for a, b in zip(sublanguage, audiolanguage):
+    subtitlelist.append(subtext + a)
+    audiolist.append(dubtext + b)
+    
+for c in country:
+    oldstartliclist.append(oldstartlic + c)
+    oldendliclist.append(oldendlic + c)
+    
+for cc in countrycode:
+    newstartliclist.append(cc + newstartlic)
+    newendliclist.append(cc + newendlic)
+    newtp.append(cc + tp)
+    newccexp.append(cc + ccexp)
+    
+for sc in subcode:
+    newccsub.append(sc + ccsub)
+    
+for ac in audiocode:
+    newccdub.append(ac + ccdub)
+
+subtitleaudiolist = subtitlelist + audiolist
+oldstartend = oldstartliclist + oldendliclist
+newstartend = newstartliclist + newendliclist
+
+#########################################################################################################
+
+#Removing whitespaces from every column included in subtitleaudiolist
+
+for i in subtitleaudiolist:
+    df[i] = df[i].str.strip()
+
+#Converting the old date columns into new date columns with the excel date being converted to readable dates
+
+for old, new in zip(oldstartend, newstartend):
+    df[new] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df[old], 'D')
+
+for d, e in zip(newtp, newstartliclist):
+    df[d] = np.where(df[e]<=todaydate, 'Current', 'Future')
+    
+#Categorize Start_Dates into Current (currently running) or Future (to run in the future)
+    
+for f, g in zip(newtp, newstartliclist):
+    df[f] = np.where(df[g]<=todaydate, 'Current', 'Future')
+    
+#Categorize End_Dates into Expiring (within the next 3 months) or Not Expiring in the near future
+
+for h, i in zip(newccexp, newendliclist):
+    df[h] = np.where((df[i] >= todaydate) & (df[i] <= mth3), 'Expiring', 'Not Expiring')
+    
+#Categorize subtitles to Live or Not Live
+
+for j, k in zip(newccsub, subtitlelist):
+    df[j] = np.where(df[k] == 'Y', 'Live', 'Not Live')
+    
+#Categorize dubs to Live or Not Live
+
+for l, m in zip(newccdub, audiolist):
+    df[l] = np.where(df[m] == 'Y', 'Live', 'Not Live')
 
