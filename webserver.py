@@ -1,4 +1,4 @@
-# pyServer 
+# pyServer using Request Lib 
 import requests 
 import json
 
@@ -7,7 +7,8 @@ import json
 # Get S3 bucket's excel sheet, using AWS CLI 
 r = requests.get('https://api.github.com/user', auth=('user', 'pass'))
 data = json.loads(r.content)
-print (data)
+http_code = r.status_code
+
 
 # Parse Raw Data to Pandas and put in async while running the following.. 
 # Local machine to create a new SQL table to set up sql schema 
