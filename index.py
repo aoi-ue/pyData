@@ -19,7 +19,7 @@ from string import Template
 
 #pulling the excel file into a variable, excelname
 
-excelname = 'x'
+excelname = 'E:\\PythonProjects\\pyData\\DataDump\\CSV_SINGTEL_INGESTION_EXTRACT_2018-12-26.csv'
 
 #creating the dataframe, df
 
@@ -50,95 +50,122 @@ df.drop(['directors','lic_start_date_malaysia','lic_end_date_malaysia','lic_star
          'rental_duration', 'currency_india', 'currency_philiphines', 'currency_thailand', 'currency_singapore', 
          'currency_malaysia', 'currency_indonesia'], axis=1, inplace=True)
 
-#Setting main lists and string format
+###Creating 2 lists from country:
 
 country = ['indonesia', 'thailand', 'philiphines', 'singapore', 'india']
-countrycode = ['ID', 'TH', 'PH', 'SG', 'IN']
-sublanguage = ['english', 'bahasa', 'thai', 'hindi', 'tamil', 'telegu']
-audiolanguage = ['english', 'bahasa', 'thai', 'mandarin', 'hindi', 'tamil', 'telegu']
-subcode = ['ENG', 'BH', 'TH', 'HIN', 'TAM', 'TEL']
-audiocode = ['ENG', 'BH', 'TH', 'MAN', 'HIN', 'TAM' ,'TEL']
 
-subtext = "subtitle_"
-dubtext = "audiolanguage_"
-oldstartlic = "lic_start_date_"
-oldendlic = "lic_end_date_"
-newstartlic = "_Start_Date"
-newendlic = "_End_Date"
-tp = "_TimePeriod"
-ccexp = "_Expiring"
-ccsub = "_SUB"
-ccdub = "_DUB"
+str_old_start_lic = "lic_start_date_"
+str_old_end_lic = "lic_end_date_"
 
-subtitlelist = []
-audiolist = []
-oldstartliclist = []
-oldendliclist = []
-newstartliclist = []
-newendliclist = []
-newtp = []
-newccexp = []
-newccsub = []
-newccdub = []
+old_start_lic_list = []
+old_end_lic_list = []
+
+for c in country:
+    #lic_start_date_indonesia
+    old_start_lic_list.append(str_old_start_lic + c)
+    #lic_end_date_indonesia
+    old_end_lic_list.append(str_old_end_lic + c)
+    
+#########################################################################################################
+    
+###Creating 4 lists from country_code:
+
+country_code = ['ID', 'TH', 'PH', 'SG', 'IN']
+
+str_new_start_lic = "_Start_Date"
+str_new_end_lic = "_End_Date"
+str_tp = "_TimePeriod"
+str_ccexp = "_Expiring"
+
+new_start_lic_list = []
+new_end_lic_list = []
+new_tp = []
+new_ccexp = []
+
+for cc in country_code:
+    #ID_Start_Date
+    new_start_lic_list.append(cc + str_new_start_lic)
+    #ID_End_Date
+    new_end_lic_list.append(cc + str_new_end_lic)
+    #ID_TimePeriod
+    new_tp.append(cc + str_tp)
+    #ID_Expiring
+    new_ccexp.append(cc + str_ccexp)
+
+#########################################################################################################
+    
+###Creating 2 lists from sub_language & audio_language
+
+sub_language = ['english', 'bahasa', 'thai', 'hindi', 'tamil', 'telegu']
+audio_language = ['english', 'bahasa', 'thai', 'mandarin', 'hindi', 'tamil', 'telegu']
+
+str_sub_text = "subtitle_"
+str_dub_text = "audiolanguage_"
+
+subtitle_list = []
+audio_list = []
+
+for a, b in zip(sub_language, audio_language):
+    #subtitle_english
+    subtitle_list.append(str_sub_text + a)
+    #audiolanguage_english
+    audio_list.append(str_dub_text + b)
+
+#########################################################################################################
+    
+###Creating 1 list from sub_code & audio_code
+
+sub_code = ['ENG', 'BH', 'TH', 'HIN', 'TAM', 'TEL']
+audio_code = ['ENG', 'BH', 'TH', 'MAN', 'HIN', 'TAM' ,'TEL']
+
+str_ccsub = "_SUB"
+str_ccdub = "_DUB"
+
+new_ccsub_list = []
+new_ccdub_list = []
+    
+for sc, ac in zip(sub_code,audio_code):
+    #ENG_SUB
+    new_ccsub_list.append(sc + str_ccsub)
+    #ENG_DUB
+    new_ccdub_list.append(ac + str_ccdub)
 
 #########################################################################################################
 
-for a, b in zip(sublanguage, audiolanguage):
-    subtitlelist.append(subtext + a)
-    audiolist.append(dubtext + b)
-    
-for c in country:
-    oldstartliclist.append(oldstartlic + c)
-    oldendliclist.append(oldendlic + c)
-    
-for cc in countrycode:
-    newstartliclist.append(cc + newstartlic)
-    newendliclist.append(cc + newendlic)
-    newtp.append(cc + tp)
-    newccexp.append(cc + ccexp)
-    
-for sc in subcode:
-    newccsub.append(sc + ccsub)
-    
-for ac in audiocode:
-    newccdub.append(ac + ccdub)
+### Combining 2 lists into 1
 
-subtitleaudiolist = subtitlelist + audiolist
-oldstartend = oldstartliclist + oldendliclist
-newstartend = newstartliclist + newendliclist
+subtitle_audio_list = subtitle_list + audio_list
+old_start_end = old_start_lic_list + old_end_lic_list
+new_start_end = new_start_lic_list + new_end_lic_list
 
 #########################################################################################################
 
 #Removing whitespaces from every column included in subtitleaudiolist
 
-for i in subtitleaudiolist:
+for i in subtitle_audio_list:
     df[i] = df[i].str.strip()
 
 #Converting the old date columns into new date columns with the excel date being converted to readable dates
 
-for old, new in zip(oldstartend, newstartend):
+for new, old in zip(new_start_end, old_start_end):
     df[new] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df[old], 'D')
-
-for d, e in zip(newtp, newstartliclist):
-    df[d] = np.where(df[e]<=todaydate, 'Current', 'Future')
     
 #Categorize Start_Dates into Current (currently running) or Future (to run in the future)
     
-for f, g in zip(newtp, newstartliclist):
-    df[f] = np.where(df[g]<=todaydate, 'Current', 'Future')
+for new, con in zip(new_tp, new_start_lic_list):
+    df[new] = np.where(df[con]<=todaydate, 'Current', 'Future')
     
 #Categorize End_Dates into Expiring (within the next 3 months) or Not Expiring in the near future
 
-for h, i in zip(newccexp, newendliclist):
-    df[h] = np.where((df[i] >= todaydate) & (df[i] <= mth3), 'Expiring', 'Not Expiring')
+for new, con in zip(new_ccexp, new_end_lic_list):
+    df[new] = np.where((df[con] >= todaydate) & (df[con] <= mth3), 'Expiring', 'Not Expiring')
     
 #Categorize subtitles to Live or Not Live
 
-for j, k in zip(newccsub, subtitlelist):
-    df[j] = np.where(df[k] == 'Y', 'Live', 'Not Live')
+for new, con in zip(new_ccsub_list, subtitle_list):
+    df[new] = np.where(df[con] == 'Y', 'Live', 'Not Live')
     
 #Categorize dubs to Live or Not Live
 
-for l, m in zip(newccdub, audiolist):
-    df[l] = np.where(df[m] == 'Y', 'Live', 'Not Live')
-
+for new, con in zip(new_ccdub_list, audio_list):
+    df[new] = np.where(df[con] == 'Y', 'Live', 'Not Live')

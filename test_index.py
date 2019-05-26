@@ -1,15 +1,19 @@
 import pytest
-from index import df
-from refactorNtest import subtitle, subtitle_length, subtitle_unique_length
+from index import subtitlelist
+from refactorNtest import subtitle_length, subtitle_unique_length
 
-a = subtitle()
-dupes = [x for n, x in enumerate(a) if x in a[:n]]
 
 def test2():
+
+    a = subtitlelist
+    dupes = [x for n, x in enumerate(a) if x in a[:n]]
+
     if (subtitle_length == subtitle_unique_length) == True:
-        print("Same Length")
+        print("No Duplicates")
         assert True
     else:
         print(dupes)
         assert False
+        
+test2()
 
