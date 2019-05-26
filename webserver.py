@@ -9,6 +9,8 @@ r = requests.get('https://api.github.com/user', auth=('user', 'pass'))
 data = json.loads(r.content)
 http_code = r.status_code
 
+print (http_code)
+
 
 # Parse Raw Data to Pandas and put in async while running the following.. 
 # Local machine to create a new SQL table to set up sql schema 
