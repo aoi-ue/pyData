@@ -19,7 +19,7 @@ from string import Template
 
 #pulling the excel file into a variable, excelname
 
-excelname = 'E:\\PythonProjects\\pyData\\DataDump\\CSV_SINGTEL_INGESTION_EXTRACT_2018-12-26.csv'
+excelname = 'x'
 
 #creating the dataframe, df
 
@@ -96,8 +96,89 @@ for new, con in zip(new_tp, new_start_lic_list):
 for new, con in zip(new_ccexp, new_end_lic_list):
     df[new] = np.where((df[con] >= todaydate) & (df[con] <= mth3), 'Expiring', 'Not Expiring')
     
-# #Categorize subtitles & dubs to Live or Not Live
+#Categorize subtitles to Live or Not Live
 
-for new1, con1, new2, con2 in zip(new_ccsub_list, subtitle_list, new_ccdub_list, audio_list):
+for new1, con1 in zip(new_ccsub_list, subtitle_list):
     df[new1] = np.where(df[con1] == 'Y', 'Live', 'Not Live')
+
+#Categorize dubs to Live or Not Live
+    
+for new2, con2 in zip(new_ccdub_list, audio_list):
     df[new2] = np.where(df[con2] == 'Y', 'Live', 'Not Live')
+
+#########################################################################################################
+#Capturing the total hours for SVOD and TVOD
+
+svod_td = [df[(df['vod_type'] == 'SVOD') & (df[i] >= todaydate)]['duration'].sum() for i in new_end_lic_list]
+tvod_td = [df[(df['vod_type'] == 'TVOD') & (df[i] >= todaydate)]['duration'].sum() for i in new_end_lic_list]
+
+### ID Hours
+
+indo_sub_dub_list = ['ENG_SUB', 'BH_SUB', 'BH_DUB']
+indo_svod_emp_list = []
+
+for i in indo_sub_dub_list:
+    a = df[(df['vod_type'] == 'SVOD') & (df['ID_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
+    b = df[(df['vod_type'] == 'SVOD') & (df['ID_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
+    c = df[(df['vod_type'] == 'SVOD') & (df['ID_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
+    d = df[(df['vod_type'] == 'SVOD') & (df['ID_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
+    e = df[(df['vod_type'] == 'SVOD') & (df['ID_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    total = [a, b, c, d, e]
+    indo_svod_emp_list.append(total)
+
+### TH Hours
+
+thai_sub_dub_list = ['ENG_SUB', 'TH_SUB', 'TH_DUB']
+thai_svod_emp_list = []
+
+for i in thai_sub_dub_list:
+    a = df[(df['vod_type'] == 'SVOD') & (df['TH_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
+    b = df[(df['vod_type'] == 'SVOD') & (df['TH_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
+    c = df[(df['vod_type'] == 'SVOD') & (df['TH_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
+    d = df[(df['vod_type'] == 'SVOD') & (df['TH_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
+    e = df[(df['vod_type'] == 'SVOD') & (df['TH_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    total = [a, b, c, d, e]
+    thai_svod_emp_list.append(total)
+
+### PH HOURS
+
+ph_sub_dub_list = ['ENG_SUB']
+ph_svod_emp_list = []
+
+for i in ph_sub_dub_list:
+    a = df[(df['vod_type'] == 'SVOD') & (df['PH_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
+    b = df[(df['vod_type'] == 'SVOD') & (df['PH_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
+    c = df[(df['vod_type'] == 'SVOD') & (df['PH_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
+    d = df[(df['vod_type'] == 'SVOD') & (df['PH_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
+    e = df[(df['vod_type'] == 'SVOD') & (df['PH_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    total = [a, b, c, d, e]
+    ph_svod_emp_list.append(total)
+
+### SG HOURS
+
+sg_sub_dub_list = ['ENG_SUB', 'MAN_DUB']
+sg_svod_emp_list = []
+
+for i in sg_sub_dub_list:
+
+    a = df[(df['vod_type'] == 'SVOD') & (df['SG_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
+    b = df[(df['vod_type'] == 'SVOD') & (df['SG_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
+    c = df[(df['vod_type'] == 'SVOD') & (df['SG_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
+    d = df[(df['vod_type'] == 'SVOD') & (df['SG_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
+    e = df[(df['vod_type'] == 'SVOD') & (df['SG_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    total = [a, b, c, d, e]
+    sg_svod_emp_list.append(total)
+
+### IN HOURS
+
+in_sub_dub_list = ['ENG_SUB', 'HIN_SUB', 'TAM_SUB', 'TEL_SUB', 'HIN_DUB', 'TAM_DUB', 'TEL_DUB']
+in_svod_emp_list = []
+
+for i in in_sub_dub_list:
+    a = df[(df['vod_type'] == 'SVOD') & (df['IN_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
+    b = df[(df['vod_type'] == 'SVOD') & (df['IN_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
+    c = df[(df['vod_type'] == 'SVOD') & (df['IN_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
+    d = df[(df['vod_type'] == 'SVOD') & (df['IN_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
+    e = df[(df['vod_type'] == 'SVOD') & (df['IN_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    total = [a, b, c, d, e]
+    in_svod_emp_list.append(total)
