@@ -50,89 +50,25 @@ df.drop(['directors','lic_start_date_malaysia','lic_end_date_malaysia','lic_star
          'rental_duration', 'currency_india', 'currency_philiphines', 'currency_thailand', 'currency_singapore', 
          'currency_malaysia', 'currency_indonesia'], axis=1, inplace=True)
 
-###Creating 2 lists from country:
-
 country = ['indonesia', 'thailand', 'philiphines', 'singapore', 'india']
-
-str_old_start_lic = "lic_start_date_"
-str_old_end_lic = "lic_end_date_"
-
-old_start_lic_list = []
-old_end_lic_list = []
-
-for c in country:
-    #lic_start_date_indonesia
-    old_start_lic_list.append(str_old_start_lic + c)
-    #lic_end_date_indonesia
-    old_end_lic_list.append(str_old_end_lic + c)
-    
-#########################################################################################################
-    
-###Creating 4 lists from country_code:
-
 country_code = ['ID', 'TH', 'PH', 'SG', 'IN']
-
-str_new_start_lic = "_Start_Date"
-str_new_end_lic = "_End_Date"
-str_tp = "_TimePeriod"
-str_ccexp = "_Expiring"
-
-new_start_lic_list = []
-new_end_lic_list = []
-new_tp = []
-new_ccexp = []
-
-for cc in country_code:
-    #ID_Start_Date
-    new_start_lic_list.append(cc + str_new_start_lic)
-    #ID_End_Date
-    new_end_lic_list.append(cc + str_new_end_lic)
-    #ID_TimePeriod
-    new_tp.append(cc + str_tp)
-    #ID_Expiring
-    new_ccexp.append(cc + str_ccexp)
-
-#########################################################################################################
-    
-###Creating 2 lists from sub_language & audio_language
-
 sub_language = ['english', 'bahasa', 'thai', 'hindi', 'tamil', 'telegu']
 audio_language = ['english', 'bahasa', 'thai', 'mandarin', 'hindi', 'tamil', 'telegu']
-
-str_sub_text = "subtitle_"
-str_dub_text = "audiolanguage_"
-
-subtitle_list = []
-audio_list = []
-
-for a, b in zip(sub_language, audio_language):
-    #subtitle_english
-    subtitle_list.append(str_sub_text + a)
-    #audiolanguage_english
-    audio_list.append(str_dub_text + b)
-
-#########################################################################################################
-    
-###Creating 1 list from sub_code & audio_code
-
 sub_code = ['ENG', 'BH', 'TH', 'HIN', 'TAM', 'TEL']
 audio_code = ['ENG', 'BH', 'TH', 'MAN', 'HIN', 'TAM' ,'TEL']
 
-str_ccsub = "_SUB"
-str_ccdub = "_DUB"
-
-new_ccsub_list = []
-new_ccdub_list = []
-    
-for sc, ac in zip(sub_code,audio_code):
-    #ENG_SUB
-    new_ccsub_list.append(sc + str_ccsub)
-    #ENG_DUB
-    new_ccdub_list.append(ac + str_ccdub)
+old_start_lic_list = ["lic_start_date_"+ i for i in country]
+old_end_lic_list = ["lic_end_date_" + i for i in country]
+new_start_lic_list = [i + "_Start_Date" for i in country_code]
+new_end_lic_list = [i + "_End_Date" for i in country_code]
+new_tp = [i + "_TimePeriod" for i in country_code]
+new_ccexp = [i + "_Expiring" for i in country_code]
+subtitle_list = ["subtitle_" + i for i in sub_language]
+audio_list = ["audiolanguage_" + i for i in audio_language]
+new_ccsub_list = [i + "_SUB" for i in sub_code]
+new_ccdub_list = [i + "_DUB" for i in audio_code]
 
 #########################################################################################################
-
-### Combining 2 lists into 1
 
 subtitle_audio_list = subtitle_list + audio_list
 old_start_end = old_start_lic_list + old_end_lic_list
@@ -160,12 +96,8 @@ for new, con in zip(new_tp, new_start_lic_list):
 for new, con in zip(new_ccexp, new_end_lic_list):
     df[new] = np.where((df[con] >= todaydate) & (df[con] <= mth3), 'Expiring', 'Not Expiring')
     
-#Categorize subtitles to Live or Not Live
+# #Categorize subtitles & dubs to Live or Not Live
 
-for new, con in zip(new_ccsub_list, subtitle_list):
-    df[new] = np.where(df[con] == 'Y', 'Live', 'Not Live')
-    
-#Categorize dubs to Live or Not Live
-
-for new, con in zip(new_ccdub_list, audio_list):
-    df[new] = np.where(df[con] == 'Y', 'Live', 'Not Live')
+for new1, con1, new2, con2 in zip(new_ccsub_list, subtitle_list, new_ccdub_list, audio_list):
+    df[new1] = np.where(df[con1] == 'Y', 'Live', 'Not Live')
+    df[new2] = np.where(df[con2] == 'Y', 'Live', 'Not Live')
