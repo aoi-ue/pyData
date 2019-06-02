@@ -14,7 +14,7 @@ import plotly.plotly as py
 import plotly.graph_objs as go
 from IPython.display import IFrame
 
-excelname = 'E:\\PythonProjects\\pyData\\DataDump\\MOCK_SINGTEL_INGESTION_EXTRACT_2018-12-26.csv'
+excelname = ''
 
 def inputdata():
     df = pd.read_csv(excelname)
