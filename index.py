@@ -17,13 +17,12 @@ from IPython.display import IFrame
 
 from string import Template
 
-#pulling the excel file into a variable, excelname
+def inputdata():
+    excelname = 'E:\\PythonProjects\\pyData\\DataDump\\MOCK_SINGTEL_INGESTION_EXTRACT_2018-12-26.csv'
+    df = pd.read_csv(excelname)
+    return df
 
-excelname = 'x'
-
-#creating the dataframe, df
-
-df = pd.read_csv(excelname)
+df = inputdata()
 
 #setting a variable for 3 months
 
@@ -182,3 +181,5 @@ for i in in_sub_dub_list:
     e = df[(df['vod_type'] == 'SVOD') & (df['IN_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
     total = [a, b, c, d, e]
     in_svod_emp_list.append(total)
+
+print("works")
