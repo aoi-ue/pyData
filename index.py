@@ -17,8 +17,9 @@ from IPython.display import IFrame
 
 from string import Template
 
+excelname = 'E:\\PythonProjects\\pyData\\DataDump\\MOCK_SINGTEL_INGESTION_EXTRACT_2018-12-26.csv'
+
 def inputdata():
-    excelname = 'E:\\PythonProjects\\pyData\\DataDump\\MOCK_SINGTEL_INGESTION_EXTRACT_2018-12-26.csv'
     df = pd.read_csv(excelname)
     return df
 
