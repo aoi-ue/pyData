@@ -1,5 +1,5 @@
 import pytest
-from index import np, df, excelname, todaydate, country, country_code, sub_language, audio_language, sub_code, audio_code
+from panda import np, df, excelname, todaydate, country, country_code, sub_language, audio_language, sub_code, audio_code
 
 test_list_dict = {'country': country, 'country_code': country_code, 'sub_language': sub_language, 
                   'audio_language': audio_language, 'sub_code': sub_code, 'audio_code': audio_code}
