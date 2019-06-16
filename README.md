@@ -15,7 +15,7 @@
 ## Timeline: 
 
 June 2019: 
-- [ ] Panda in TDD
+- [x] ~~Panda in TDD~~
 - [ ] Advance pyTest and refactor to Objects
 - [ ] Create Web API using Flask and Pytest-d in HTTP: Web Networking TDD
 - [ ] Run Plotly & D3js with Panda
