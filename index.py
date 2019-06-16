@@ -14,25 +14,24 @@ import plotly.plotly as py
 import plotly.graph_objs as go
 from IPython.display import IFrame
 
-excelname = ''
+#Test2: Ensure that file name has csv
+excelname = 'E:\\PythonProjects\\pyData\\DataDump\\MOCK_SINGTEL_INGESTION_EXTRACT_2018-12-26.csv'
 
 def inputdata():
     df = pd.read_csv(excelname)
     return df
 
+#Test3: Ensure that df is not empty
 df = inputdata()
 
 #setting a variable for 3 months
-
 three_months = date.today() + relativedelta(months=+3)
 mth3 = pd.to_datetime(three_months)
 
 #creating a variable called todaydate to capture today's date
-
 todaydate = pd.datetime.now()
 
 #drop columns
-
 df.drop(['directors','lic_start_date_malaysia','lic_end_date_malaysia','lic_start_date_mauritius',
          'lic_end_date_mauritius','contenttype','status','playback_india','playback_philiphines','playback_thailand',
          'playback_singapore', 'playback_malaysia', 'playback_indonesia', 'download_india', 'download_philiphines', 
