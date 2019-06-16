@@ -3,7 +3,7 @@
 ## Purpose:
 
 1. To automate data cleaning, and visualization using pandas and plotpy.
-2. To create a web server with backend support to display the visualization.
+2. To create a web server to display the data visualization.
 
 ## Built With:
     - xlrd
@@ -15,9 +15,12 @@
 ## Timeline: 
 
 June 2019: 
-- [ ] Create a Web Server in Requests and Flask
-- [x] ~~Refactor Panda in TDD~~
-- [ ] Run Plotly with Panda
+- [ ] Panda in TDD
+- [ ] Advance pyTest and refactor to Objects
+- [ ] Create Web API using Flask and Pytest-d in HTTP: Web Networking TDD
+- [ ] Run Plotly & D3js with Panda
+- [ ] AWS: S3 bucket SDK, Lambda to run code, EC2 to manage server
+- [ ] Run Python Performance & test coverage 
 
 March 2019:
 - [x] ~~Refactored Code: created country files + used np.where~~
