@@ -14,15 +14,18 @@ import plotly.plotly as py
 import plotly.graph_objs as go
 from IPython.display import IFrame
 
-#Test2: Ensure that file name has csv
-excelname = ''
+from s3 import df
 
-def inputdata():
-    df = pd.read_csv(excelname)
-    return df
+# excelname = ''
+
+#Test2: Ensure that file name has csv
+
+# def inputdata():
+#     df = pd.read_csv(excelname)
+#     return df
 
 #Test3: Ensure that df is not empty
-df = inputdata()
+# df = inputdata()
 
 #setting a variable for 3 months
 three_months = date.today() + relativedelta(months=+3)
