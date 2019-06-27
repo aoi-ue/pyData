@@ -11,6 +11,7 @@
     - pytest
     - matplotlib
     - numpy
+    - boto3
 
 ## Timeline: 
 
