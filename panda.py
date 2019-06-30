@@ -118,17 +118,17 @@ indo_svod_emp_list = []
 indo_tvod_emp_list = []
 
 for i in indo_sub_dub_list:
-    a = df[(df['vod_type'] == 'SVOD') & (df['ID_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
-    b = df[(df['vod_type'] == 'SVOD') & (df['ID_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
-    c = df[(df['vod_type'] == 'SVOD') & (df['ID_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
-    d = df[(df['vod_type'] == 'SVOD') & (df['ID_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
-    e = df[(df['vod_type'] == 'SVOD') & (df['ID_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    a = df[(df['vod_type'] == 'SVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
+    b = df[(df['vod_type'] == 'SVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
+    c = df[(df['vod_type'] == 'SVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
+    d = df[(df['vod_type'] == 'SVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
+    e = df[(df['vod_type'] == 'SVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
     
-    a2 = df[(df['vod_type'] == 'TVOD') & (df['ID_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
-    b2 = df[(df['vod_type'] == 'TVOD') & (df['ID_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
-    c2 = df[(df['vod_type'] == 'TVOD') & (df['ID_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
-    d2 = df[(df['vod_type'] == 'TVOD') & (df['ID_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
-    e2 = df[(df['vod_type'] == 'TVOD') & (df['ID_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    a2 = df[(df['vod_type'] == 'TVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
+    b2 = df[(df['vod_type'] == 'TVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
+    c2 = df[(df['vod_type'] == 'TVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
+    d2 = df[(df['vod_type'] == 'TVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
+    e2 = df[(df['vod_type'] == 'TVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
     
     total = [a, b, c, d, e]
     total2 = [a2, b2, c2, d2, e2]
@@ -237,14 +237,54 @@ for i in in_sub_dub_list:
     in_svod_emp_list.append(total)
     in_tvod_emp_list.append(total2)
 
-labels = ['ID SVOD', 'TH SVOD', 'PH_SVOD', 'SG_SVOD', 'IN_SVOD']
-values = svod_td
-colors = ['#822B24', '#1B4F6A', '#36614F', '#A94B35', '#571F4E']
+#SVOD Country Level Total Hours
 
-trace = go.Pie(labels=labels, values=values,
-               hoverinfo='label+value', textinfo='label+percent', 
-               textfont=dict(size=14),
-               marker=dict(colors=colors, 
-                           line=dict(color='#000000', width=2)))
+def pie1(): 
+    labels = ['ID SVOD', 'TH SVOD', 'PH_SVOD', 'SG_SVOD', 'IN_SVOD']
+    values = svod_td
+    colors = ['#822B24', '#1B4F6A', '#36614F', '#A94B35', '#571F4E']
 
-py.plot([trace], filename='styled_pie_chart')
+    trace = go.Pie(labels=labels, values=values,
+                   hoverinfo='label+value', textinfo='label+percent', 
+                   textfont=dict(size=14),
+                   marker=dict(colors=colors, 
+                               line=dict(color='#000000', width=2)))
+
+    return py.plot([trace], filename='styled_pie_chart')
+
+#SVOD ID 5 Tier Hours
+
+def bar1():
+
+    trace1 = go.Bar(
+        x=['Current Live', 'Future Live', 'Current Not Live', 'Future Not Live', 'Expiring'],
+        y=indo_svod_emp_list[0],
+        marker=dict(color='#4570ba'),
+        name='ID ENG SUB'
+    )
+
+    trace2 = go.Bar(
+        x=['Current Live', 'Future Live', 'Current Not Live', 'Future Not Live', 'Expiring'],
+        y=indo_svod_emp_list[1],
+        marker=dict(color='#ba4558'),
+        name='ID BH SUB'
+    )
+
+    trace3 = go.Bar(
+        x=['Current Live', 'Future Live', 'Current Not Live', 'Future Not Live', 'Expiring'],
+        y=indo_svod_emp_list[1],
+        marker=dict(color='#7e57a8'),
+        name='ID BH DUB'
+    )
+
+    data = [trace1, trace2, trace3]
+    layout = go.Layout(
+        barmode='stack'
+    )
+
+    fig = go.Figure(data=data, layout=layout)
+    return py.iplot(fig, filename='stacked-bar')
+
+
+pie1()
+bar1()
