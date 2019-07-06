@@ -49,6 +49,22 @@ df.drop(['directors','lic_start_date_malaysia','lic_end_date_malaysia','lic_star
          'rental_duration', 'currency_india', 'currency_philiphines', 'currency_thailand', 'currency_singapore', 
          'currency_malaysia', 'currency_indonesia'], axis=1, inplace=True)
 
+#Converting the dates into a datetime format
+
+df['lic_end_date_indonesia'] = pd.to_datetime(df.lic_end_date_indonesia)
+df['lic_end_date_thailand'] = pd.to_datetime(df.lic_end_date_thailand)
+df['lic_end_date_philiphines'] = pd.to_datetime(df.lic_end_date_philiphines)
+df['lic_end_date_singapore'] = pd.to_datetime(df.lic_end_date_singapore)
+df['lic_end_date_india'] = pd.to_datetime(df.lic_end_date_india)
+
+df['lic_start_date_indonesia'] = pd.to_datetime(df.lic_start_date_indonesia)
+df['lic_start_date_thailand'] = pd.to_datetime(df.lic_start_date_thailand)
+df['lic_start_date_philiphines'] = pd.to_datetime(df.lic_start_date_philiphines)
+df['lic_start_date_singapore'] = pd.to_datetime(df.lic_start_date_singapore)
+df['lic_start_date_india'] = pd.to_datetime(df.lic_start_date_india)
+
+#Setting up name/list variables
+
 country = ['indonesia', 'thailand', 'philiphines', 'singapore', 'india']
 country_code = ['ID', 'TH', 'PH', 'SG', 'IN']
 sub_language = ['english', 'bahasa', 'thai', 'hindi', 'tamil', 'telegu']
@@ -79,11 +95,6 @@ new_start_end = new_start_lic_list + new_end_lic_list
 
 for i in subtitle_audio_list:
     df[i] = df[i].str.strip()
-
-#Converting the old date columns into new date columns with the excel date being converted to readable dates
-
-for new, old in zip(new_start_end, old_start_end):
-    df[new] = pd.to_datetime('1899-12-30') + pd.to_timedelta(df[old], 'D')
     
 #Categorize Start_Dates into Current (currently running) or Future (to run in the future)
     
@@ -111,6 +122,32 @@ for new2, con2 in zip(new_ccdub_list, audio_list):
 svod_td = [df[(df['vod_type'] == 'SVOD') & (df[i] >= todaydate)]['duration'].sum() for i in new_end_lic_list]
 tvod_td = [df[(df['vod_type'] == 'TVOD') & (df[i] >= todaydate)]['duration'].sum() for i in new_end_lic_list]
 
+#Creating separate data frames for the individual countries
+
+svemp = []
+tvemp = []
+
+for i in old_end_lic_list:
+    svemp.append(df[(df['vod_type'] == 'SVOD') & (df[i] >= todaydate)])
+    
+for i in old_end_lic_list:
+    tvemp.append(df[(df['vod_type'] == 'TVOD') & (df[i] >= todaydate)])
+
+ID_svoddf = svemp[0]
+TH_svoddf = svemp[1]
+PH_svoddf = svemp[2]
+SG_svoddf = svemp[3]
+IN_svoddf = svemp[4]
+
+ID_tvoddf = tvemp[0]
+TH_tvoddf = tvemp[1]
+PH_tvoddf = tvemp[2]
+SG_tvoddf = tvemp[3]
+IN_tvoddf = tvemp[4]
+
+
+
+
 ### ID Hours
 
 indo_sub_dub_list = ['ENG_SUB', 'BH_SUB', 'BH_DUB']
@@ -118,17 +155,17 @@ indo_svod_emp_list = []
 indo_tvod_emp_list = []
 
 for i in indo_sub_dub_list:
-    a = df[(df['vod_type'] == 'SVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
-    b = df[(df['vod_type'] == 'SVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
-    c = df[(df['vod_type'] == 'SVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
-    d = df[(df['vod_type'] == 'SVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
-    e = df[(df['vod_type'] == 'SVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    a = ID_svoddf[(ID_svoddf['ID_TimePeriod'] == 'Current') & (ID_svoddf[i] == 'Live')]['duration'].sum()
+    b = ID_svoddf[(ID_svoddf['ID_TimePeriod'] == 'Future') & (ID_svoddf[i] == 'Live')]['duration'].sum()
+    c = ID_svoddf[(ID_svoddf['ID_TimePeriod'] == 'Current') & (ID_svoddf[i] == 'Not Live')]['duration'].sum()
+    d = ID_svoddf[(ID_svoddf['ID_TimePeriod'] == 'Future') & (ID_svoddf[i] == 'Not Live')]['duration'].sum()
+    e = ID_svoddf[(ID_svoddf['ID_TimePeriod'] == 'Expiring') & (ID_svoddf[i] == 'Not Live')]['duration'].sum()
     
-    a2 = df[(df['vod_type'] == 'TVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
-    b2 = df[(df['vod_type'] == 'TVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
-    c2 = df[(df['vod_type'] == 'TVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
-    d2 = df[(df['vod_type'] == 'TVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
-    e2 = df[(df['vod_type'] == 'TVOD') & (df['ID_End_Date'] >= todaydate) & (df['ID_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    a2 = ID_tvoddf[(ID_tvoddf['ID_TimePeriod'] == 'Current') & (ID_tvoddf[i] == 'Live')]['duration'].sum()
+    b2 = ID_tvoddf[(ID_tvoddf['ID_TimePeriod'] == 'Future') & (ID_tvoddf[i] == 'Live')]['duration'].sum()
+    c2 = ID_tvoddf[(ID_tvoddf['ID_TimePeriod'] == 'Current') & (ID_tvoddf[i] == 'Not Live')]['duration'].sum()
+    d2 = ID_tvoddf[(ID_tvoddf['ID_TimePeriod'] == 'Future') & (ID_tvoddf[i] == 'Not Live')]['duration'].sum()
+    e2 = ID_tvoddf[(ID_tvoddf['ID_Expiring'] == 'Expiring') & (ID_tvoddf[i] == 'Not Live')]['duration'].sum()
     
     total = [a, b, c, d, e]
     total2 = [a2, b2, c2, d2, e2]
@@ -143,17 +180,17 @@ thai_svod_emp_list = []
 thai_tvod_emp_list = []
 
 for i in thai_sub_dub_list:
-    a = df[(df['vod_type'] == 'SVOD') & (df['TH_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
-    b = df[(df['vod_type'] == 'SVOD') & (df['TH_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
-    c = df[(df['vod_type'] == 'SVOD') & (df['TH_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
-    d = df[(df['vod_type'] == 'SVOD') & (df['TH_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
-    e = df[(df['vod_type'] == 'SVOD') & (df['TH_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    a = TH_svoddf[(TH_svoddf['TH_TimePeriod'] == 'Current') & (TH_svoddf[i] == 'Live')]['duration'].sum()
+    b = TH_svoddf[(TH_svoddf['TH_TimePeriod'] == 'Future') & (TH_svoddf[i] == 'Live')]['duration'].sum()
+    c = TH_svoddf[(TH_svoddf['TH_TimePeriod'] == 'Current') & (TH_svoddf[i] == 'Not Live')]['duration'].sum()
+    d = TH_svoddf[(TH_svoddf['TH_TimePeriod'] == 'Future') & (TH_svoddf[i] == 'Not Live')]['duration'].sum()
+    e = TH_svoddf[(TH_svoddf['TH_Expiring'] == 'Expiring') & (TH_svoddf[i] == 'Not Live')]['duration'].sum()
     
-    a2 = df[(df['vod_type'] == 'TVOD') & (df['TH_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
-    b2 = df[(df['vod_type'] == 'TVOD') & (df['TH_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
-    c2 = df[(df['vod_type'] == 'TVOD') & (df['TH_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
-    d2 = df[(df['vod_type'] == 'TVOD') & (df['TH_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
-    e2 = df[(df['vod_type'] == 'TVOD') & (df['TH_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    a2 = TH_tvoddf[(TH_tvoddf['TH_TimePeriod'] == 'Current') & (TH_tvoddf[i] == 'Live')]['duration'].sum()
+    b2 = TH_tvoddf[(TH_tvoddf['TH_TimePeriod'] == 'Future') & (TH_tvoddf[i] == 'Live')]['duration'].sum()
+    c2 = TH_tvoddf[(TH_tvoddf['TH_TimePeriod'] == 'Current') & (TH_tvoddf[i] == 'Not Live')]['duration'].sum()
+    d2 = TH_tvoddf[(TH_tvoddf['TH_TimePeriod'] == 'Future') & (TH_tvoddf[i] == 'Not Live')]['duration'].sum()
+    e2 = TH_tvoddf[(TH_tvoddf['TH_Expiring'] == 'Expiring') & (TH_tvoddf[i] == 'Not Live')]['duration'].sum()
     
     total = [a, b, c, d, e]
     total2 = [a2, b2, c2, d2, e2]
@@ -168,17 +205,17 @@ ph_svod_emp_list = []
 ph_tvod_emp_list = []
 
 for i in ph_sub_dub_list:
-    a = df[(df['vod_type'] == 'SVOD') & (df['PH_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
-    b = df[(df['vod_type'] == 'SVOD') & (df['PH_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
-    c = df[(df['vod_type'] == 'SVOD') & (df['PH_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
-    d = df[(df['vod_type'] == 'SVOD') & (df['PH_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
-    e = df[(df['vod_type'] == 'SVOD') & (df['PH_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    a = PH_svoddf[(PH_svoddf['PH_TimePeriod'] == 'Current') & (PH_svoddf[i] == 'Live')]['duration'].sum()
+    b = PH_svoddf[(PH_svoddf['PH_TimePeriod'] == 'Future') & (PH_svoddf[i] == 'Live')]['duration'].sum()
+    c = PH_svoddf[(PH_svoddf['PH_TimePeriod'] == 'Current') & (PH_svoddf[i] == 'Not Live')]['duration'].sum()
+    d = PH_svoddf[(PH_svoddf['PH_TimePeriod'] == 'Future') & (PH_svoddf[i] == 'Not Live')]['duration'].sum()
+    e = PH_svoddf[(PH_svoddf['PH_Expiring'] == 'Expiring') & (PH_svoddf[i] == 'Not Live')]['duration'].sum()
     
-    a2 = df[(df['vod_type'] == 'TVOD') & (df['PH_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
-    b2 = df[(df['vod_type'] == 'TVOD') & (df['PH_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
-    c2 = df[(df['vod_type'] == 'TVOD') & (df['PH_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
-    d2 = df[(df['vod_type'] == 'TVOD') & (df['PH_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
-    e2 = df[(df['vod_type'] == 'TVOD') & (df['PH_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    a2 = PH_tvoddf[(PH_tvoddf['PH_TimePeriod'] == 'Current') & (PH_tvoddf[i] == 'Live')]['duration'].sum()
+    b2 = PH_tvoddf[(PH_tvoddf['PH_TimePeriod'] == 'Future') & (PH_tvoddf[i] == 'Live')]['duration'].sum()
+    c2 = PH_tvoddf[(PH_tvoddf['PH_TimePeriod'] == 'Current') & (PH_tvoddf[i] == 'Not Live')]['duration'].sum()
+    d2 = PH_tvoddf[(PH_tvoddf['PH_TimePeriod'] == 'Future') & (PH_tvoddf[i] == 'Not Live')]['duration'].sum()
+    e2 = PH_tvoddf[(PH_tvoddf['PH_Expiring'] == 'Expiring') & (PH_tvoddf[i] == 'Not Live')]['duration'].sum()
     
     total = [a, b, c, d, e]
     total2 = [a2, b2, c2, d2, e2]
@@ -193,24 +230,23 @@ sg_svod_emp_list = []
 sg_tvod_emp_list = []
 
 for i in sg_sub_dub_list:
-
-    a = df[(df['vod_type'] == 'SVOD') & (df['SG_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
-    b = df[(df['vod_type'] == 'SVOD') & (df['SG_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
-    c = df[(df['vod_type'] == 'SVOD') & (df['SG_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
-    d = df[(df['vod_type'] == 'SVOD') & (df['SG_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
-    e = df[(df['vod_type'] == 'SVOD') & (df['SG_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    a = SG_svoddf[(SG_svoddf['SG_TimePeriod'] == 'Current') & (SG_svoddf[i] == 'Live')]['duration'].sum()
+    b = SG_svoddf[(SG_svoddf['SG_TimePeriod'] == 'Future') & (SG_svoddf[i] == 'Live')]['duration'].sum()
+    c = SG_svoddf[(SG_svoddf['SG_TimePeriod'] == 'Current') & (SG_svoddf[i] == 'Not Live')]['duration'].sum()
+    d = SG_svoddf[(SG_svoddf['SG_TimePeriod'] == 'Future') & (SG_svoddf[i] == 'Not Live')]['duration'].sum()
+    e = SG_svoddf[(SG_svoddf['SG_Expiring'] == 'Expiring') & (SG_svoddf[i] == 'Not Live')]['duration'].sum()
     
-    a2 = df[(df['vod_type'] == 'TVOD') & (df['SG_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
-    b2 = df[(df['vod_type'] == 'TVOD') & (df['SG_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
-    c2 = df[(df['vod_type'] == 'TVOD') & (df['SG_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
-    d2 = df[(df['vod_type'] == 'TVOD') & (df['SG_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
-    e2 = df[(df['vod_type'] == 'TVOD') & (df['SG_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    a2 = SG_tvoddf[(SG_tvoddf['SG_TimePeriod'] == 'Current') & (SG_tvoddf[i] == 'Live')]['duration'].sum()
+    b2 = SG_tvoddf[(SG_tvoddf['SG_TimePeriod'] == 'Future') & (SG_tvoddf[i] == 'Live')]['duration'].sum()
+    c2 = SG_tvoddf[(SG_tvoddf['SG_TimePeriod'] == 'Current') & (SG_tvoddf[i] == 'Not Live')]['duration'].sum()
+    d2 = SG_tvoddf[(SG_tvoddf['SG_TimePeriod'] == 'Future') & (SG_tvoddf[i] == 'Not Live')]['duration'].sum()
+    e2 = SG_tvoddf[(SG_tvoddf['SG_Expiring'] == 'Expiring') & (SG_tvoddf[i] == 'Not Live')]['duration'].sum()
     
     total = [a, b, c, d, e]
     total2 = [a2, b2, c2, d2, e2]
     
     sg_svod_emp_list.append(total)
-    sg_svod_emp_list.append(total2)
+    sg_tvod_emp_list.append(total2)
 
 ### IN HOURS
 
@@ -219,17 +255,17 @@ in_svod_emp_list = []
 in_tvod_emp_list = []
 
 for i in in_sub_dub_list:
-    a = df[(df['vod_type'] == 'SVOD') & (df['IN_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
-    b = df[(df['vod_type'] == 'SVOD') & (df['IN_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
-    c = df[(df['vod_type'] == 'SVOD') & (df['IN_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
-    d = df[(df['vod_type'] == 'SVOD') & (df['IN_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
-    e = df[(df['vod_type'] == 'SVOD') & (df['IN_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    a = IN_svoddf[(IN_svoddf['IN_TimePeriod'] == 'Current') & (IN_svoddf[i] == 'Live')]['duration'].sum()
+    b = IN_svoddf[(IN_svoddf['IN_TimePeriod'] == 'Future') & (IN_svoddf[i] == 'Live')]['duration'].sum()
+    c = IN_svoddf[(IN_svoddf['IN_TimePeriod'] == 'Current') & (IN_svoddf[i] == 'Not Live')]['duration'].sum()
+    d = IN_svoddf[(IN_svoddf['IN_TimePeriod'] == 'Future') & (IN_svoddf[i] == 'Not Live')]['duration'].sum()
+    e = IN_svoddf[(IN_svoddf['IN_Expiring'] == 'Expiring') & (IN_svoddf[i] == 'Not Live')]['duration'].sum()
     
-    a2 = df[(df['vod_type'] == 'TVOD') & (df['IN_TimePeriod'] == 'Current') & (df[i] == 'Live')]['duration'].sum()
-    b2 = df[(df['vod_type'] == 'TVOD') & (df['IN_TimePeriod'] == 'Future') & (df[i] == 'Live')]['duration'].sum()
-    c2 = df[(df['vod_type'] == 'TVOD') & (df['IN_TimePeriod'] == 'Current') & (df[i] == 'Not Live')]['duration'].sum()
-    d2 = df[(df['vod_type'] == 'TVOD') & (df['IN_TimePeriod'] == 'Future') & (df[i] == 'Not Live')]['duration'].sum()
-    e2 = df[(df['vod_type'] == 'TVOD') & (df['IN_Expiring'] == 'Expiring') & (df[i] == 'Not Live')]['duration'].sum()
+    a2 = IN_tvoddf[(IN_tvoddf['IN_TimePeriod'] == 'Current') & (IN_tvoddf[i] == 'Live')]['duration'].sum()
+    b2 = IN_tvoddf[(IN_tvoddf['IN_TimePeriod'] == 'Future') & (IN_tvoddf[i] == 'Live')]['duration'].sum()
+    c2 = IN_tvoddf[(IN_tvoddf['IN_TimePeriod'] == 'Current') & (IN_tvoddf[i] == 'Not Live')]['duration'].sum()
+    d2 = IN_tvoddf[(IN_tvoddf['IN_TimePeriod'] == 'Future') & (IN_tvoddf[i] == 'Not Live')]['duration'].sum()
+    e2 = IN_tvoddf[(IN_tvoddf['IN_Expiring'] == 'Expiring') & (IN_tvoddf[i] == 'Not Live')]['duration'].sum()
     
     total = [a, b, c, d, e]
     total2 = [a2, b2, c2, d2, e2]
